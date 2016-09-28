@@ -7,15 +7,16 @@
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
         <script>
-            function random(min, max) {
-                return Math.floor(Math.random()*(max-min+1)+min);
+            function random(min, max, tofix) {
+                if (tofix <= 0) return Math.floor(Math.random()*(max-min+1)+min);
+                else return parseFloat((Math.random()*(max-min+1)+min).toFixed(tofix));
             }
-            function generate(min, max, count, mean) {
+            function generate(min, max, count, mean, tofix) {
                 var list = [];
                 var total = count * mean;
                 var j, sum = 0;
                 for (var i = 0; i < count-1; i++) {
-                    j = random(min, max);
+                    j = random(min, max, tofix);
                     sum += j;
                     list.push(j);
                 }
@@ -49,6 +50,15 @@
                     <label for="count">count</label>
                     <input type="number" class="form-control" id="count" placeholder="Count">
                 </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="float"> float
+                    </label>
+                </div>
+                <div class="form-group hide" id="precision">
+                    <label for="tofix">precision</label>
+                    <input type="number" class="form-control" id="tofix" placeholder="Precision" value="1">
+                </div>
                 <button type="button" class="btn btn-default">Generate</button>
             </form>
             <div id="result">
@@ -62,8 +72,24 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <script>
             $(document).ready(function () {
+                $('#float').click(function () {
+                    $('#precision').toggleClass('hide');
+                });
                 $('button').click(function () {
-                    var list = generate(parseInt($('#min').val()), parseInt($('#max').val()), parseInt($('#count').val()), parseInt($('#mean').val()));
+                    var count = parseInt($('#count').val()), min, max, mean;
+                    var tofix = 0;
+                    var isFloat = $('#float').prop('checked');
+                    if (isFloat) {
+                        tofix = parseInt($('#tofix').val());
+                        min = parseFloat($('#min').val());
+                        max = parseFloat($('#max').val());
+                        mean = parseFloat($('#mean').val());
+                    } else {
+                        min = parseInt($('#min').val());
+                        max = parseInt($('#max').val());
+                        mean = parseInt($('#mean').val());
+                    }
+                    var list = generate(min, max, count, mean, tofix);
                     var table = '';
                     $.each(list, function (i, num) {
                         table += '<tr><td>'+num+'</td></tr>';
