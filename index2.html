@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <script>
+            function random(min, max) {
+                return Math.floor(Math.random()*(max-min+1)+min);
+            }
+            function generate(min, max, count, mean, m) {
+                if (typeof m === "undefined") m = 5;
+                min = min / m;
+                max = max / m;
+                mean = mean / m;
+                var list = [];
+                var total = count * mean;
+                var j, sum = 0;
+                for (var i = 0; i < count-1; i++) {
+                    j = random(min, max) * m;
+                    sum += j;
+                    list.push(j);
+                }
+                if (total - sum < min) {
+                    list.push(min % m * m);
+                } else if (total - sum > max) {
+                    list.push(max % m * m);
+                } else {
+                    list.push((total - sum) % m * m);
+                }
+                return list;
+            }
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <form>
+                <div class="form-group">
+                    <label for="min">min</label>
+                    <input type="number" class="form-control" id="min" placeholder="Min">
+                </div>
+                <div class="form-group">
+                    <label for="max">max</label>
+                    <input type="number" class="form-control" id="max" placeholder="Max">
+                </div>
+                <div class="form-group">
+                    <label for="mean">mean</label>
+                    <input type="number" class="form-control" id="mean" placeholder="Mean">
+                </div>
+                <div class="form-group">
+                    <label for="count">count</label>
+                    <input type="number" class="form-control" id="count" placeholder="Count">
+                </div>
+                <button type="button" class="btn btn-default">Generate</button>
+            </form>
+            <div id="result">
+                <table class="table">
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script>
+            $(document).ready(function () {
+                $('button').click(function () {
+                    var count = parseInt($('#count').val()), min, max, mean;
+                    min = parseInt($('#min').val());
+                    max = parseInt($('#max').val());
+                    mean = parseInt($('#mean').val());
+                    var list = generate(min, max, count, mean);
+                    var sum = 0;
+                    for (var i = 0; i < list.length; i++) {
+                        sum += list[i];
+                    }
+                    console.log(sum, sum/list.length);
+                    var table = '';
+                    $.each(list, function (i, num) {
+                        table += '<tr><td>'+num+'</td></tr>';
+                    });
+                    $('tbody').empty().html(table);
+                });
+            });
+        </script>
+    </body>
+</html>
